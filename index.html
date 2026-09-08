@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="爪爪人格局：宠物品种推测、趣味人格和主宠亲子相 Demo" />
+  <title>爪爪人格局 · 宠物趣味测试</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="report.css" />
+  <link rel="stylesheet" href="hub.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">爪</span><span>爪爪人格局</span></a>
+    <nav aria-label="页面导航">
+      <button class="nav-item active" data-view="home">工具首页</button>
+      <button class="nav-item" data-view="history">历史档案 <span id="historyCount">0</span></button>
+    </nav>
+    <div class="mini-profile">趣味测试站 <span>✦</span></div>
+  </header>
+
+  <main>
+    <section id="homeView" class="view active hub-view">
+      <div class="hub-hero">
+        <span class="hub-kicker">PAWSONA · 毛孩子趣味工具集合</span>
+        <h1>毛孩子<span>趣味工具合集</span></h1>
+        <p>给准铲屎官和资深铲屎官的小玩意</p>
+      </div>
+      <div class="hub-section">
+        <h2>🔥 热门工具 <small>· 推荐先玩</small></h2>
+        <div class="tool-grid">
+          <button class="tool-card peach" data-tool="test"><span class="tool-icon">🎭</span><strong>性格测试</strong><p>上传照片，解锁毛孩子的隐藏人设与性格五维</p><i>开始测试 →</i></button>
+          <button class="tool-card yellow" data-tool="parent"><span class="tool-icon">🧑‍🍼</span><strong>主宠亲子相</strong><p>看看你和毛孩子，是不是越长越像的一家人</p><i>上传照片解锁 →</i></button>
+          <button class="tool-card mint" data-tool="profile"><span class="new-badge">NEW</span><span class="tool-icon">📖</span><strong>前世身份与职业</strong><p>测测它上辈子是谁，这辈子最适合干什么</p><i>揭晓身份 →</i></button>
+          <button class="tool-card blue" data-tool="history"><span class="tool-icon">🐾</span><strong>毛孩子档案馆</strong><p>收藏每一次测试，慢慢拼出它的完整人设</p><i>查看档案 →</i></button>
+        </div>
+      </div>
+      <div class="hub-section mystic-zone">
+        <h2>✨ 更多玩法 <small>· 玄学专区</small></h2>
+        <div class="tool-grid">
+          <button class="tool-card purple" data-tool="tarot"><span class="new-badge">NEW</span><span class="tool-icon">🔮</span><strong>宠物塔罗</strong><p>抽一张牌，听听它最近在想什么、想对你说什么</p><i>选择问题并抽牌 →</i></button>
+          <button class="tool-card star" data-tool="birthday"><span class="new-badge">NEW</span><span class="tool-icon">⭐</span><strong>生日缘分</strong><p>星座＋八字五行，看看你们的天生默契</p><i>测测缘分 →</i></button>
+        </div>
+      </div>
+      <p class="hub-disclaimer">所有测试均为趣味内容，请不要代替科学养宠、医疗或行为判断。</p>
+    </section>
+
+    <section id="testView" class="view">
+      <button class="page-back" data-view="home">← 返回工具合集</button>
+      <div class="intro">
+        <div>
+          <div class="eyebrow"><span>✦</span> AI 趣味分析 · 不给毛孩子贴死标签</div>
+          <h1>来看看你家毛孩子，<br><em>私下是什么人设？</em></h1>
+          <p>上传一张清晰照片，解锁品种推测、有梗宠设和你们的亲子相。</p>
+        </div>
+        <img class="hero-pets" src="assets/pet-duo.png" alt="可爱的柯基和橘猫插画" />
+      </div>
+
+      <div class="workspace">
+        <section class="upload-card">
+          <div class="step-title"><span>01</span><div><h2>先认识一下主角</h2><p>正脸照一张就能玩，照片越清楚结果越靠谱</p></div></div>
+          <label class="dropzone" id="petDropzone">
+            <input id="petInput" type="file" accept="image/jpeg,image/png,image/webp" />
+            <img id="petPreview" alt="宠物照片预览" />
+            <div class="drop-copy">
+              <div class="camera">📷</div>
+              <strong>上传宠物正脸照</strong>
+              <span>点击选择，或拖进这里</span>
+              <small>JPG / PNG / WEBP · 单张不超过 10MB</small>
+            </div>
+            <button type="button" class="change-photo">换一张</button>
+          </label>
+          <div class="photo-check checking" id="photoCheck" role="status"><span>◌</span><div><strong>宠物识别模型准备中</strong><small>准备完成后才能生成分析报告</small></div></div>
+
+          <div class="tips">
+            <div class="tips-head"><span>💡</span><div><strong>怎样拍更容易认出来？</strong><small>不用拍证件照，抓住下面三点就够啦</small></div></div>
+            <div class="tip-grid">
+              <div class="tip good"><span class="tip-pic">🐶</span><strong>清晰正脸</strong><small>必选 · 看清五官和耳朵</small></div>
+              <div class="tip optional"><span class="tip-pic side">🐕</span><strong>侧脸 / 全身</strong><small>可选 · 提高体型判断</small></div>
+              <div class="tip bad"><span class="tip-pic">🌚</span><strong>避免昏暗遮挡</strong><small>滤镜、衣服别挡住脸</small></div>
+            </div>
+          </div>
+
+          <div class="pet-fields">
+            <label>它叫什么？<input id="petName" maxlength="12" placeholder="例如：豆包" /></label>
+            <label>它是？<select id="petType"><option>狗狗</option><option>猫猫</option><option>其他萌宠</option></select></label>
+            <label class="breed-field">品种（可选）<select id="petBreed"><option value="auto">让 AI 帮我猜</option></select><small>如果你知道准确品种，请以主人填写为准</small></label>
+          </div>
+          <button class="primary" id="analyzeBtn" disabled><span>✦</span> 请先上传宠物照片</button>
+          <p class="privacy">🔒 照片仅在本机预览，本 Demo 不会上传或保存原图</p>
+        </section>
+
+        <aside class="preview-card">
+          <div class="sample-label">报告长这样 <span>DEMO</span></div>
+          <div class="result-photo"><div class="result-placeholder">🐾</div><img id="resultPetPhoto" alt="分析中的宠物" /><span class="match-tag">匹配度 87%</span></div>
+          <div class="result-body">
+            <small id="resultBreed">疑似 · 威尔士柯基犬</small>
+            <h2 id="resultPersona">社牛运动健将</h2>
+            <p id="resultQuote">“本汪的人生信条：路过的每个人，都可能是还没认识的新朋友。”</p>
+            <div class="traits" id="resultTraits"><span>社交力 MAX</span><span>干饭积极</span><span>偶尔戏精</span></div>
+            <section class="personality-panel report-module" data-report-module="profile">
+              <div class="section-kicker"><span>✦</span> 性格五维</div>
+              <div class="radar-wrap">
+                <svg class="radar" viewBox="0 0 250 220" role="img" aria-label="宠物性格五维雷达图">
+                  <g class="radar-grid"><polygon points="125,25 220,94 184,205 66,205 30,94"/><polygon points="125,55 191,103 166,180 84,180 59,103"/><polygon points="125,84 163,112 148,155 102,155 87,112"/><line x1="125" y1="115" x2="125" y2="25"/><line x1="125" y1="115" x2="220" y2="94"/><line x1="125" y1="115" x2="184" y2="205"/><line x1="125" y1="115" x2="66" y2="205"/><line x1="125" y1="115" x2="30" y2="94"/></g>
+                  <polygon id="radarShape" class="radar-shape" points="125,34 207,97 175,191 91,167 42,97"/><g class="radar-dots" id="radarDots"></g>
+                  <g class="radar-labels"><text x="125" y="15">黏人度</text><text x="231" y="92">社牛值</text><text x="191" y="217">干饭热情</text><text x="57" y="217">拆家欲</text><text x="19" y="92">运动量</text></g>
+                </svg>
+                <div class="score-list" id="scoreList"></div>
+              </div>
+            </section>
+            <section class="os-card report-module" data-report-module="profile"><div class="os-avatar">💭</div><div><small>毛孩子内心 OS</small><p id="innerOs">我不是精力旺盛，我只是在认真拓展自己的朋友圈。</p></div></section>
+            <div class="report-grid report-module" data-report-module="profile">
+              <section class="mini-report"><span class="report-icon">🧑‍🍼</span><small>适合的铲屎官</small><strong id="ownerFit">活力陪玩型</strong><p id="ownerDesc">愿意出门、情绪稳定，还能准点开饭的人类。</p></section>
+              <section class="mini-report love-guide"><span class="report-icon">🫶</span><small>它的爱语</small><strong id="loveLanguage">一起疯玩</strong><p id="loveDesc">陪它跑一圈，比隔空说十遍爱你更有用。</p></section>
+            </div>
+            <section class="destiny-section report-module" data-report-module="profile">
+              <div class="section-kicker"><span>✺</span> 毛孩子时空档案</div>
+              <div class="destiny-grid">
+                <article class="destiny-card past-life"><div class="destiny-top"><span>🏮</span><small>前世身份测试</small></div><strong id="pastLifeTitle">丝路驿站外交官</strong><p id="pastLifeDesc">凭借超强社交力，在往来商队之间混得风生水起，主要工作是迎宾和蹭饭。</p><div class="destiny-stamp">前世认证</div></article>
+                <article class="destiny-card career"><div class="destiny-top"><span>💼</span><small>现代职业测试</small></div><strong id="careerTitle">宠物公关总监</strong><p id="careerDesc">擅长主动破冰、调动气氛，以及让会议在零食出现时迅速达成共识。</p><div class="career-fit">职业适配度 <b id="careerFit">96%</b></div></article>
+              </div>
+            </section>
+            <section class="birthday-section report-module module-hidden" data-report-module="bond">
+              <div class="section-kicker"><span>☯</span> 主宠生日缘分</div>
+              <p class="birthday-intro">用星座元素与八字五行，看看你们属于同频搭子还是互补拍档。</p>
+              <div class="birthday-form">
+                <div class="birth-person"><strong>🧑 主人</strong><label>出生日期<input id="ownerBirthDate" type="date"></label><label>出生时间（选填）<input id="ownerBirthTime" type="time"></label></div>
+                <div class="birth-heart">♡</div>
+                <div class="birth-person"><strong>🐾 宠物</strong><label>出生日期<input id="petBirthDate" type="date"></label><label>出生时间（选填）<input id="petBirthTime" type="time"></label></div>
+              </div>
+              <button class="birth-button" id="birthMatchBtn">查看生日匹配度</button>
+              <div class="birth-result" id="birthResult">
+                <div class="match-orbit"><span id="birthScore">88</span><small>缘分值</small></div>
+                <div class="birth-verdict"><small id="zodiacPair">双子座 × 白羊座</small><strong id="matchTitle">灵感互补型搭档</strong><p id="matchCopy">一个负责想点子，一个负责立刻冲出去执行，日常很难无聊。</p></div>
+                <div class="bazi-columns"><div><small>主人八字</small><b id="ownerBazi">乙亥 壬午 丁丑</b></div><div><small>宠物八字</small><b id="petBazi">壬寅 甲辰 庚子</b></div></div>
+                <div class="element-bars" id="elementBars"></div>
+                <p class="birthday-note" id="birthdayNote">未填写出生时间时，仅使用年、月、日三柱参考。算法为星座元素 40%＋五行互补 60%，仅供娱乐。</p>
+              </div>
+            </section>
+            <section class="tarot-section report-module module-hidden" data-report-module="tarot">
+              <div class="section-kicker"><span>✦</span> 毛孩子塔罗</div>
+              <p class="tarot-intro">先选择你最想问的问题，再在心里默念它的名字，从三张牌中选一张。</p>
+              <div class="tarot-questions" id="tarotQuestions">
+                <button class="active" data-question="fortune">近期运势</button><button data-question="thought">它最近在想什么</button><button data-question="message">它想对我说什么</button><button data-question="need">它最近需要什么</button><button data-question="relationship">我们的关系状态</button><button data-question="attention">近期要注意什么</button>
+              </div>
+              <div class="tarot-deck" id="tarotDeck">
+                <button class="tarot-card" data-card="0" aria-label="抽取左边的塔罗牌"><span class="card-back"><i>☾</i><b>PAW TAROT</b><em>✦</em></span><span class="card-front"></span></button>
+                <button class="tarot-card featured" data-card="1" aria-label="抽取中间的塔罗牌"><span class="card-back"><i>☼</i><b>PAW TAROT</b><em>✦</em></span><span class="card-front"></span></button>
+                <button class="tarot-card" data-card="2" aria-label="抽取右边的塔罗牌"><span class="card-back"><i>☾</i><b>PAW TAROT</b><em>✦</em></span><span class="card-front"></span></button>
+              </div>
+              <p class="tarot-hint" id="tarotHint">凭第一感觉选一张 · 每次只解一张牌</p>
+              <div class="tarot-reading" id="tarotReading">
+                <div class="reading-head"><div><small id="tarotPosition">正位</small><strong id="tarotName">太阳 THE SUN</strong></div><span id="tarotLuck">近期运势 92</span></div>
+                <p id="tarotMeaning">这几天它的状态会更加明亮主动，愿意探索、玩耍，也更容易对你表达亲近。</p>
+                <div class="reading-grid"><div><small id="tarotDetailLabel1">可能发生</small><p id="tarotEvent">发现新的玩耍方式，或者突然对某个角落产生浓厚兴趣。</p></div><div><small id="tarotDetailLabel2">铲屎官行动签</small><p id="tarotAdvice">安排一次它喜欢的游戏，把这份好心情接住。</p></div></div>
+                <blockquote id="tarotOs">“本周的我，自带小太阳。”</blockquote>
+                <button id="tarotAgain">重新洗牌</button>
+              </div>
+              <small class="tarot-note">塔罗解读属于娱乐性故事创作，不预测疾病、走失或其他现实风险。</small>
+            </section>
+            <section class="manual-card report-module" data-report-module="profile"><div class="section-kicker"><span>☼</span> 相处说明书</div><ul id="careTips"><li>每天安排一段专注互动时间</li><li>用小游戏消耗旺盛精力</li><li>表现兴奋时先让它冷静下来</li></ul><div class="warning"><span>⚠</span><p><b>今日小提醒</b><br><span id="warningText">零食袋请放高一点，它已经研究过柜门结构了。</span></p></div></section>
+            <div class="report-note">趣味人格由照片与问卷线索生成，不代表医学或行为学诊断。</div>
+          </div>
+          <div class="parent-test">
+            <div><span>👩🏻</span><span>＋</span><span>🐶</span></div>
+            <div><strong>主宠亲子相</strong><small>分析完宠物后解锁主人照片上传</small></div>
+            <button id="parentBtn" disabled>待解锁</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="birthdayView" class="view tool-page"><button class="page-back" data-view="home">← 返回工具合集</button><div class="tool-page-head"><span>⭐</span><div><small>PAW DESTINY</small><h1>主宠生日缘分</h1><p>输入你和毛孩子的生日，看看星座与五行里的默契暗号。</p></div></div><div id="birthdayMount" class="standalone-tool"></div></section>
+
+    <section id="tarotView" class="view tool-page"><button class="page-back" data-view="home">← 返回工具合集</button><div class="tool-page-head"><span>🔮</span><div><small>PAW TAROT</small><h1>问问毛孩子的小脑瓜</h1><p>先选一个问题，再凭第一感觉抽一张牌。</p></div></div><div id="tarotMount" class="standalone-tool"></div></section>
+
+    <section id="historyView" class="view history-view">
+      <button class="page-back" data-view="home">← 返回工具合集</button><div class="history-head"><div><span class="eyebrow">PAW ARCHIVE</span><h1>毛孩子档案馆</h1><p>每一次测试，都是一张成长中的性格快照。</p></div><button class="secondary" data-view="test">＋ 新建测试</button></div>
+      <div id="historyList" class="history-list"></div>
+      <div id="historyEmpty" class="history-empty"><span>🐾</span><h2>还没有留下爪印</h2><p>完成第一次测试后，报告会保存在这台设备里。</p><button class="primary" data-view="test">去测一测</button></div>
+    </section>
+  </main>
+
+  <dialog id="parentDialog">
+    <button class="dialog-close" aria-label="关闭">×</button>
+    <div class="dialog-icon">👩🏻‍🦰 <span>♡</span> 🐾</div>
+    <h2>测测你们的亲子相</h2>
+    <p>上传主人清晰正脸照即可。我们会趣味比较表情、构图与气质，不进行身份识别。</p>
+    <label class="owner-upload"><input id="ownerInput" type="file" accept="image/*"><span>📸</span><strong id="ownerFileName">选择主人照片</strong><small>正脸清晰 · 单人入镜 · 避免墨镜</small></label>
+    <button class="primary" id="matchBtn" disabled>生成亲子相报告</button>
+    <div id="matchResult" class="match-result"><small>主宠亲子相</small><strong>92%</strong><p>你们都有一张“看起来乖巧，心里很有主意”的脸。<br>鉴定结果：不是一家人，不进一家门。</p></div>
+  </dialog>
+
+  <div class="toast" id="toast">报告已存入毛孩子档案馆 ✦</div>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
