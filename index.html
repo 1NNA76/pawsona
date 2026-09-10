@@ -34,7 +34,7 @@
       <div class="hub-section">
         <h2>🔥 热门工具 <small>· 推荐先玩</small></h2>
         <div class="tool-grid">
-          <button class="tool-card quiz-feature" data-tool="dogquiz"><span class="new-badge science-badge">研究启发</span><span class="tool-icon">🧠</span><strong>犬格问卷</strong><p>24题 · 6维度 · 约4分钟，用日常行为拼出它的人格画像</p><i>开始答题 →</i></button>
+          <button class="tool-card quiz-feature" data-tool="dogquiz"><span class="new-badge science-badge">研究启发</span><span class="tool-icon">🧠</span><strong>犬格问卷</strong><p>30题 · 6维度 · 约5分钟，用日常行为拼出它的人格画像</p><i>开始答题 →</i></button>
           <button class="tool-card peach" data-tool="test"><span class="tool-icon">🎭</span><strong>性格测试</strong><p>上传照片，解锁毛孩子的隐藏人设与性格五维</p><i>开始测试 →</i></button>
           <button class="tool-card yellow" data-tool="parent"><span class="tool-icon">🧑‍🍼</span><strong>主宠亲子相</strong><p>看看你和毛孩子，是不是越长越像的一家人</p><i>上传照片解锁 →</i></button>
           <button class="tool-card mint" data-tool="profile"><span class="new-badge">NEW</span><span class="tool-icon">📖</span><strong>前世身份与职业</strong><p>测测它上辈子是谁，这辈子最适合干什么</p><i>揭晓身份 →</i></button>
@@ -199,11 +199,11 @@
 
     <section id="dogquizView" class="view tool-page quiz-page">
       <button class="page-back" data-view="home">← 返回工具合集</button>
-      <div class="tool-page-head"><span>🧠</span><div><small>PAW PERSONALITY 24</small><h1>犬格六维问卷</h1><p>回想最近三个月，用真实日常回答，而不是理想中的它。</p></div></div>
+      <div class="tool-page-head"><span>🧠</span><div><small>PAW PERSONALITY 30</small><h1>犬格六维问卷</h1><p>回想最近三个月，用真实日常回答，而不是理想中的它。</p></div></div>
       <div class="quiz-shell">
         <section id="quizIntro" class="quiz-intro">
-          <div class="quiz-intro-copy"><span class="quiz-pill">原创行为问卷 · 无需上传照片</span><h2>它是哪一种“犬格”？</h2><p>24个生活场景，观察社交、依恋、活跃、自控、训练响应与情绪敏感六个维度。</p></div>
-          <div class="quiz-facts"><div><b>24</b><span>道题</span></div><div><b>6</b><span>个维度</span></div><div><b>≈4</b><span>分钟</span></div></div>
+          <div class="quiz-intro-copy"><span class="quiz-pill">原创行为问卷 · 无需上传照片</span><h2>它是哪一种“犬格”？</h2><p>24道六维计分题＋6道生活画像题，从分数和日常细节一起认识它。</p></div>
+          <div class="quiz-facts"><div><b>30</b><span>道题</span></div><div><b>6</b><span>个维度</span></div><div><b>≈5</b><span>分钟</span></div></div>
           <label class="quiz-name">毛孩子叫什么？（选填）<input id="quizPetName" maxlength="12" placeholder="例如：小墨"></label>
           <button id="quizStartBtn" class="quiz-primary">开始认识它 <span>→</span></button>
           <div class="quiz-method"><strong>答题小诀窍</strong><p>按“从不—几乎总是”选择。没有标准答案；若某个情境没发生过，选最接近日常表现的一项。</p></div>
@@ -211,7 +211,7 @@
         </section>
 
         <section id="quizFormPanel" class="quiz-form-panel" hidden>
-          <div class="quiz-progress-head"><span id="quizStepLabel">第 1 组 / 共 6 组</span><b id="quizProgressText">0 / 24</b></div>
+          <div class="quiz-progress-head"><span id="quizStepLabel">第 1 组 / 共 6 组</span><b id="quizProgressText">0 / 30</b></div>
           <div class="quiz-progress"><i id="quizProgressBar"></i></div>
           <div id="quizQuestionList" class="quiz-question-list"></div>
           <div class="quiz-actions"><button id="quizBackBtn" class="quiz-secondary">上一组</button><button id="quizNextBtn" class="quiz-primary" disabled>下一组 <span>→</span></button></div>
@@ -220,14 +220,15 @@
         </section>
 
         <section id="quizResult" class="quiz-result" hidden>
-          <div class="quiz-result-hero"><div><small id="quizResultName">毛孩子的犬格报告</small><h2 id="quizResultTitle">社牛运动健将</h2><p id="quizResultSummary"></p></div><span class="quiz-stamp">24题<br>完成</span></div>
+          <div class="quiz-result-hero"><div><small id="quizResultName">毛孩子的犬格报告</small><h2 id="quizResultTitle">社牛运动健将</h2><p id="quizResultSummary"></p></div><span class="quiz-stamp">30题<br>完成</span></div>
           <div class="quiz-result-main">
             <div class="quiz-radar-card"><svg id="quizRadar" viewBox="0 0 340 320" role="img" aria-label="犬格六维雷达图"><g class="quiz-radar-grid"><polygon points="170,45 275,105 275,225 170,285 65,225 65,105"/><polygon points="170,85 240,125 240,205 170,245 100,205 100,125"/><polygon points="170,125 205,145 205,185 170,205 135,185 135,145"/><line x1="170" y1="165" x2="170" y2="45"/><line x1="170" y1="165" x2="275" y2="105"/><line x1="170" y1="165" x2="275" y2="225"/><line x1="170" y1="165" x2="170" y2="285"/><line x1="170" y1="165" x2="65" y2="225"/><line x1="170" y1="165" x2="65" y2="105"/></g><polygon id="quizRadarShape" class="quiz-radar-shape" points="170,165 170,165 170,165 170,165 170,165 170,165"/><g id="quizRadarDots" class="quiz-radar-dots"></g><g class="quiz-radar-labels"><text x="170" y="24">社牛值</text><text x="292" y="103">黏人度</text><text x="298" y="235">活跃度</text><text x="170" y="312">自控力</text><text x="42" y="235">学习力</text><text x="43" y="103">敏感度</text></g></svg></div>
             <div id="quizScores" class="quiz-score-list"></div>
           </div>
           <div id="quizInsightGrid" class="quiz-insight-grid"></div>
+          <section class="quiz-behavior-section"><div class="quiz-behavior-head"><span>🏠</span><div><small>生活切片</small><strong>它在家里的真实频道</strong></div></div><div id="quizBehaviorProfile" class="quiz-behavior-grid"></div></section>
           <section class="quiz-advice"><span>🦴</span><div><small>专属相处建议</small><p id="quizAdvice"></p></div></section>
-          <div class="quiz-meta"><span id="quizCompleteness">有效作答 24 / 24</span><span>观察期：最近3个月</span><span>依据：主人行为报告</span></div>
+          <div class="quiz-meta"><span id="quizCompleteness">六维有效作答 24 / 24 · 生活画像 6 / 6</span><span>观察期：最近3个月</span><span>依据：主人行为报告</span></div>
           <p class="quiz-disclaimer">这是研究启发型的趣味评估，不是犬类 MBTI、医学结论或行为诊断。同一只狗在年龄、环境与健康状态变化后，结果也可能改变。</p>
           <button id="quizRetakeBtn" class="quiz-secondary quiz-retake">重新测试</button>
         </section>
