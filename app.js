@@ -453,6 +453,57 @@ $('#quizNextBtn').addEventListener('click',()=>{
   try{showDogQuizResult();$('#quizStatus').textContent=''}catch(error){console.error('犬格报告生成失败',error);button.disabled=false;button.innerHTML='重新生成报告 <span>✦</span>';$('#quizStatus').textContent='报告生成遇到问题，请点击“重新生成报告”。'}
 });
 $('#quizRetakeBtn').addEventListener('click',()=>{$('#quizResult').hidden=true;$('#quizIntro').hidden=false;$('#quizIntro').scrollIntoView({behavior:'smooth',block:'start'})});
+
+const catQuizQuestions=[
+  {text:'它会主动蹭你、踩奶或在你附近发出呼噜声。',dim:'bond'},{text:'家里来了陌生人时，它愿意在安全距离观察，而不是立刻躲起来。',dim:'social'},{text:'看到逗猫棒、移动的小物体时，它很快进入玩耍状态。',dim:'play'},{text:'突如其来的声音或动作容易让它受到惊吓。',dim:'sensitivity'},{text:'玩得兴奋之后，它能在一段时间内自己平静下来。',dim:'regulation'},
+  {text:'它喜欢占据固定的睡觉、观察或休息位置。',dim:'territory'},{text:'你坐下或躺下时，它会主动靠近或待在同一空间。',dim:'bond'},{text:'面对熟悉且友善的其他猫时，它愿意共享空间。',dim:'social'},{text:'它会主动探索纸箱、袋子、新家具或发生变化的角落。',dim:'play'},{text:'换环境、家具移动或家中出现新物品会让它明显谨慎。',dim:'sensitivity'},
+  {text:'不喜欢被触摸时，它通常会先走开或发出较温和的警告。',dim:'regulation'},{text:'其他动物进入它常用的位置时，它会明显守住或驱赶。',dim:'territory'},{text:'与主人分开一段时间后，它会主动确认主人是否回来。',dim:'bond'},{text:'它愿意主动接近熟悉的访客并与其互动。',dim:'social'},{text:'清醒时，它会主动奔跑、攀爬或邀请人陪玩。',dim:'play'},
+  {text:'受到惊吓后，它通常需要较长时间才能重新放松。',dim:'sensitivity'},{text:'没有立刻得到想要的食物或关注时，它能较快接受。',dim:'regulation'},{text:'它喜欢待在高处观察，并掌握家里发生的动静。',dim:'territory'},{text:'身体不舒服或不安时，它会更愿意靠近信任的人。',dim:'bond'},{text:'在没有压力的情况下，它会对新来的人保持好奇。',dim:'social'},
+  {text:'即使提供玩耍机会，它大多数时候仍不太愿意活动。',dim:'play',reverse:true},{text:'主人语气、情绪或作息改变时，它会明显调整自己的行为。',dim:'sensitivity'},{text:'抚摸时间过长时，它经常毫无预警地突然拍打或咬人。',dim:'regulation',reverse:true},{text:'它不太在意自己的位置或物品被其他动物占用。',dim:'territory',reverse:true},{text:'它多数时候完全不在意主人在哪个房间。',dim:'bond',reverse:true},
+  {text:'即使对方表现友善，它仍会长时间躲避陌生人或其他猫。',dim:'social',reverse:true},{text:'夜间或清晨，它经常出现明显的跑酷或狩猎游戏。',dim:'play'},{text:'面对日常常见的声音和活动，它通常能够保持放松。',dim:'sensitivity',reverse:true},{text:'被打断或改变计划后，它经常长时间烦躁、叫唤或反复尝试。',dim:'regulation',reverse:true},{text:'它会巡查房间、门口或窗边，确认自己的空间状态。',dim:'territory'}
+];
+const catQuizDims={
+  bond:{label:'亲人连接',icon:'🫶',high:'会主动建立亲密连接，把信任的人划进核心圈。',mid:'亲近和独处切换自然，感情表达有自己的节奏。',low:'表达比较独立，喜欢你不等于时时贴在身边。'},
+  social:{label:'社交开放',icon:'🐾',high:'好奇心常常战胜拘谨，对新对象愿意先观察再接触。',mid:'熟悉后才营业，是谨慎而有选择的社交派。',low:'更重视距离和安全出口，不喜欢被强迫认识新朋友。'},
+  play:{label:'活跃玩心',icon:'🪀',high:'捕猎游戏和探索欲旺盛，身体里住着跑酷选手。',mid:'玩耍与休息分配均衡，遇到喜欢的游戏才认真营业。',low:'更偏爱安静观察，低强度游戏可能更适合它。'},
+  regulation:{label:'情绪自控',icon:'🌿',high:'能用相对清晰的信号表达边界，兴奋后也较易恢复。',mid:'多数时候能调节自己，压力累积时需要及时停手。',low:'情绪容易突然上头，更需要读懂前置信号和降低刺激。'},
+  territory:{label:'自主领地',icon:'👑',high:'对空间和日程很有主见，是家里的隐形物业经理。',mid:'有偏爱的地盘，也能接受日常的小变化。',low:'对位置与资源较随和，空间适应弹性相对更高。'},
+  sensitivity:{label:'环境敏感',icon:'📡',high:'声音、气味和气氛变化都容易被捕捉，需要可预测的安全感。',mid:'能够觉察变化，也通常能按自己的节奏恢复。',low:'对多数生活动静比较淡定，适应变化相对轻松。'}
+};
+let catQuizPage=0,catQuizAnswers=Array(30).fill(null);
+function renderCatQuiz(){
+  const start=catQuizPage*5,answered=catQuizAnswers.filter(value=>value!==null).length;
+  $('#catQuizStep').textContent=`第 ${catQuizPage+1} 组 / 共 6 组`;$('#catQuizProgress').textContent=`${answered} / 30`;$('#catQuizBar').style.width=`${answered/30*100}%`;
+  $('#catQuizQuestions').innerHTML=catQuizQuestions.slice(start,start+5).map((question,offset)=>{const index=start+offset;return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${question.text}</h3><div class="quiz-options">${dogQuizOptions.map(option=>`<label class="quiz-option"><input type="radio" name="cat-${index}" value="${option.value}" ${catQuizAnswers[index]===option.value?'checked':''}><span>${option.value?`${option.value} · `:''}${option.label}</span></label>`).join('')}</div></article>`}).join('');
+  $$('#catQuizQuestions input').forEach(input=>input.addEventListener('change',event=>{const index=Number(event.target.name.replace('cat-',''));catQuizAnswers[index]=Number(event.target.value);const total=catQuizAnswers.filter(value=>value!==null).length;$('#catQuizProgress').textContent=`${total} / 30`;$('#catQuizBar').style.width=`${total/30*100}%`;updateCatNext()}));
+  $('#catQuizBack').disabled=catQuizPage===0;$('#catQuizNext').innerHTML=catQuizPage===5?'查看猫格报告 <span>✦</span>':'下一组 <span>→</span>';updateCatNext();
+}
+function updateCatNext(){const start=catQuizPage*5;$('#catQuizNext').disabled=!catQuizAnswers.slice(start,start+5).every(value=>value!==null)}
+function catTitle(scores){
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([key])=>key),key=[...top].sort().join('+');
+  return {'bond+sensitivity':'高敏贴贴小卫星','bond+social':'全家社交部长','play+territory':'凌晨跑酷物业经理','play+social':'好奇心探险队长','regulation+territory':'冷静领地管理员','bond+regulation':'温柔陪伴艺术家','sensitivity+territory':'谨慎观察总监'}[key]||`${catQuizDims[top[0]].label}系主子`;
+}
+function showCatResult(){
+  const totals={bond:0,social:0,play:0,regulation:0,territory:0,sensitivity:0},counts={bond:0,social:0,play:0,regulation:0,territory:0,sensitivity:0};
+  catQuizQuestions.forEach((question,index)=>{const answer=catQuizAnswers[index];if(answer>0){totals[question.dim]+=question.reverse?6-answer:answer;counts[question.dim]++}});
+  const scores=Object.fromEntries(Object.entries(totals).map(([key,total])=>[key,counts[key]?Math.round(((total/counts[key])-1)/4*100):50]));
+  const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]),top=ranked[0][0],second=ranked[1][0],low=ranked[5][0],name=$('#catQuizName').value.trim()||'你家主子',safeName=escapeQuizText(name);
+  $('#catResultName').textContent=`${name}的猫格报告`;$('#catResultTitle').textContent=catTitle(scores);$('#catResultSummary').textContent=`它最明显的两种气质是「${catQuizDims[top].label}」与「${catQuizDims[second].label}」。这是当前生活状态的观察快照，而不是一成不变的标签。`;
+  $('#catWrittenHeadline').textContent=`${name}的完整性格说明`;$('#catWrittenIntro').textContent=`${name}是只很有自己节奏的猫咪。它的亲近、回避、玩耍和小脾气，都是在表达当下的需要与安全感。`;
+  const level=(score,high,mid,lowText)=>score>=70?high:score>=40?mid:lowText;
+  const written=[['🧭 核心气质',`${safeName}最突出的频道是${catQuizDims[top].label}，同时带有明显的${catQuizDims[second].label}。它有自己的判断，不会为了配合人类而随时改变节奏。`],['🫶 亲密关系',level(scores.bond,`${safeName}会主动确认信任的人在哪里，贴贴与陪伴是重要的安全信号。`,`${safeName}既愿意靠近，也需要独处，关系好不好不能只看黏不黏。`,`${safeName}表达感情比较含蓄，给它主动靠近的机会比追着抱更有效。`)],['🐾 社交边界',level(scores.social,`${safeName}愿意对新对象保持好奇，但仍应保留退路。`,`${safeName}会先观察再决定是否营业，熟悉感比热闹更重要。`,`${safeName}需要更大的安全距离，躲开并不是“不合群”。`)],['🪀 玩耍与探索',level(scores.play,`${safeName}有明显的捕猎与探索动力，适合每天安排多轮短游戏。`,`${safeName}遇到对胃口的玩法才会认真投入。`,`${safeName}偏爱安静观察，可以尝试缓慢、低强度的逗猫方式。`)],['📡 压力与恢复',level(scores.sensitivity,`${safeName}对环境变化很敏锐，固定躲藏点与稳定作息尤其重要。`,`${safeName}能发现变化，也通常能按自己的节奏恢复。`,`${safeName}面对多数生活动静比较淡定，但仍要尊重飞机耳、甩尾和离开等信号。`)],['👑 领地与主见',level(scores.territory,`${safeName}很在意熟悉的位置和空间秩序，是家里的隐形物业经理。`,`${safeName}有固定偏好，也能接受循序渐进的调整。`,`${safeName}对空间资源相对随和，但仍需要专属休息点。`)],['⚠️ 容易踩雷',`${safeName}相对需要支持的是${catQuizDims[low].label}。强抱、堵住退路、持续抚摸或突然改变环境，都可能让小压力累积成大反应。`],['🌱 相处说明',`让${safeName}拥有选择权：可以靠近，也可以离开；可以玩，也可以停。用稳定作息、垂直空间、躲藏点和短而愉快的互动建立信任。`]];
+  $('#catWrittenSections').innerHTML=written.map(([title,copy])=>`<article><h3>${title}</h3><p>${copy}</p></article>`).join('');
+  const center={x:170,y:165},radius=120,points=Object.keys(catQuizDims).map((key,index)=>{const angle=(-90+index*60)*Math.PI/180,r=radius*scores[key]/100;return{x:center.x+Math.cos(angle)*r,y:center.y+Math.sin(angle)*r}});
+  $('#catRadarShape').setAttribute('points',points.map(point=>`${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' '));$('#catRadarDots').innerHTML=points.map(point=>`<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5"/>`).join('');
+  $('#catQuizScores').innerHTML=Object.entries(catQuizDims).map(([key,dim])=>`<div class="quiz-score-row"><header><span>${dim.icon} ${dim.label}</span><b>${scores[key]}</b></header><div class="quiz-score-track"><i style="width:${scores[key]}%"></i></div><p>${scores[key]>=70?dim.high:scores[key]>=40?dim.mid:dim.low}</p></div>`).join('');
+  $('#catQuizInsights').innerHTML=`<article class="quiz-insight"><small>👑 主子身份</small><strong>${catTitle(scores)}</strong><p>${catQuizDims[top].high}</p></article><article class="quiz-insight"><small>💭 猫咪内心 OS</small><strong>“亲近可以，请尊重本喵节奏。”</strong><p>${scores.sensitivity>=70?'世界的动静我都听见了，请给我一点缓冲时间。':scores.territory>=70?'这个家归你付房租，归我负责巡视。':'我会用自己的方式，把你放进信任名单。'}</p></article>`;
+  const advice={bond:'别用是否黏人判断感情，固定时间进行低压力互动。',social:'让它自己决定接近速度，永远保留可以撤退的路线。',play:'尝试模拟捕猎的小幅移动，每次游戏时间不必很长。',regulation:'看到甩尾、飞机耳、皮肤抽动就及时停手，别等到拍咬才结束。',territory:'提供稳定睡窝、高处和躲藏点，环境调整尽量分阶段进行。',sensitivity:'减少突然声响和强迫接触，让食物、气味与熟悉物品帮助它适应变化。'};
+  $('#catQuizAdvice').textContent=`重点照顾「${catQuizDims[low].label}」：${advice[low]}`;$('#catQuizCompleteness').textContent=`有效作答 ${catQuizAnswers.filter(answer=>answer>0).length} / 30`;$('#catQuizForm').hidden=true;$('#catQuizResult').hidden=false;$('#catQuizResult').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#catQuizStart').addEventListener('click',()=>{catQuizPage=0;catQuizAnswers=Array(30).fill(null);$('#catQuizIntro').hidden=true;$('#catQuizResult').hidden=true;$('#catQuizForm').hidden=false;renderCatQuiz()});
+$('#catQuizBack').addEventListener('click',()=>{if(catQuizPage>0){catQuizPage--;renderCatQuiz();window.scrollTo({top:$('#catquizView').offsetTop,behavior:'smooth'})}});
+$('#catQuizNext').addEventListener('click',()=>{if(catQuizPage<5){catQuizPage++;renderCatQuiz();window.scrollTo({top:$('#catquizView').offsetTop,behavior:'smooth'});return}const button=$('#catQuizNext');button.disabled=true;button.textContent='正在生成报告…';try{showCatResult();$('#catQuizStatus').textContent=''}catch(error){console.error('猫格报告生成失败',error);button.disabled=false;button.textContent='重新生成报告';$('#catQuizStatus').textContent='报告生成遇到问题，请点击重试。'}});
+$('#catQuizRetake').addEventListener('click',()=>{$('#catQuizResult').hidden=true;$('#catQuizIntro').hidden=false;$('#catQuizIntro').scrollIntoView({behavior:'smooth',block:'start'})});
 function showToast(text){const t=$('#toast');t.textContent=text;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderHistory();
 updateDeepReport(personas[0]);

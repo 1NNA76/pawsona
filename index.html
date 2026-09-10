@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="report.css" />
   <link rel="stylesheet" href="hub.css" />
-  <link rel="stylesheet" href="quiz.css?v=20260910-4" />
+  <link rel="stylesheet" href="quiz.css?v=20260910-5" />
 </head>
 <body>
   <div class="noise"></div>
@@ -35,6 +35,7 @@
         <h2>🔥 热门工具 <small>· 推荐先玩</small></h2>
         <div class="tool-grid">
           <button class="tool-card quiz-feature" data-tool="dogquiz"><span class="new-badge science-badge">研究启发</span><span class="tool-icon">🧠</span><strong>犬格问卷</strong><p>32题 · 6维度 · 约5分钟，用日常行为拼出它的人格画像</p><i>开始答题 →</i></button>
+          <button class="tool-card quiz-feature cat-quiz-card" data-tool="catquiz"><span class="new-badge cat-badge">全新</span><span class="tool-icon">🐈</span><strong>猫格问卷</strong><p>30题 · 6维度 · 约5分钟，读懂主子的亲近、边界与小脾气</p><i>开始答题 →</i></button>
           <button class="tool-card peach" data-tool="test"><span class="tool-icon">🎭</span><strong>性格测试</strong><p>上传照片，解锁毛孩子的隐藏人设与性格五维</p><i>开始测试 →</i></button>
           <button class="tool-card yellow" data-tool="parent"><span class="tool-icon">🧑‍🍼</span><strong>主宠亲子相</strong><p>看看你和毛孩子，是不是越长越像的一家人</p><i>上传照片解锁 →</i></button>
           <button class="tool-card mint" data-tool="profile"><span class="new-badge">NEW</span><span class="tool-icon">📖</span><strong>前世身份与职业</strong><p>测测它上辈子是谁，这辈子最适合干什么</p><i>揭晓身份 →</i></button>
@@ -237,6 +238,37 @@
       </div>
     </section>
 
+    <section id="catquizView" class="view tool-page quiz-page cat-quiz-page">
+      <button class="page-back" data-view="home">← 返回工具合集</button>
+      <div class="tool-page-head"><span>🐈</span><div><small>FELINE PERSONALITY 30</small><h1>猫格六维问卷</h1><p>回想最近三个月，按它平时真实的表现作答。</p></div></div>
+      <div class="quiz-shell cat-quiz-shell">
+        <section id="catQuizIntro" class="quiz-intro">
+          <div class="quiz-intro-copy"><span class="quiz-pill">猫咪专属 · 原创行为问卷</span><h2>你家主子是哪一种“猫格”？</h2><p>围绕亲人连接、社交边界、活跃玩心、环境敏感、情绪自控与自主领地六个维度。</p></div>
+          <div class="quiz-facts"><div><b>30</b><span>道题</span></div><div><b>6</b><span>个维度</span></div><div><b>≈5</b><span>分钟</span></div></div>
+          <label class="quiz-name">猫咪叫什么？（选填）<input id="catQuizName" maxlength="12" placeholder="例如：年糕"></label>
+          <button id="catQuizStart" class="quiz-primary">开始读懂主子 <span>→</span></button>
+          <div class="quiz-method"><strong>答题小诀窍</strong><p>请以最近三个月最常见的表现为准。猫咪没有“好性格”和“坏性格”，只有不同的安全感、边界和表达方式。</p></div>
+          <details class="quiz-science"><summary>这套问卷有什么依据？</summary><p>维度参考 Feline Five、Fe-BARQ 等猫行为与人格研究的主人报告思路，全部题目由 Pawsona 重新编写，尚未经过独立样本验证，仅用于观察与交流。</p></details>
+        </section>
+        <section id="catQuizForm" class="quiz-form-panel" hidden>
+          <div class="quiz-progress-head"><span id="catQuizStep">第 1 组 / 共 6 组</span><b id="catQuizProgress">0 / 30</b></div><div class="quiz-progress"><i id="catQuizBar"></i></div>
+          <div id="catQuizQuestions" class="quiz-question-list"></div>
+          <div class="quiz-actions"><button id="catQuizBack" class="quiz-secondary">上一组</button><button id="catQuizNext" class="quiz-primary" disabled>下一组 <span>→</span></button></div>
+          <p id="catQuizStatus" class="quiz-status" role="status" aria-live="polite"></p><p class="quiz-save-note">答案只保存在当前页面，不会上传。</p>
+        </section>
+        <section id="catQuizResult" class="quiz-result" hidden>
+          <div class="quiz-result-hero cat-result-hero"><div><small id="catResultName">猫咪的猫格报告</small><h2 id="catResultTitle">冷脸贴贴艺术家</h2><p id="catResultSummary"></p></div><span class="quiz-stamp">30题<br>完成</span></div>
+          <section class="quiz-written-report"><div class="written-report-head"><span>📝</span><div><small>文字版深度报告</small><strong id="catWrittenHeadline">主子的完整性格说明</strong></div></div><p id="catWrittenIntro" class="written-intro"></p><div id="catWrittenSections" class="written-sections"></div></section>
+          <div class="quiz-result-main"><div class="quiz-radar-card"><svg viewBox="0 0 340 320" role="img" aria-label="猫格六维雷达图"><g class="quiz-radar-grid"><polygon points="170,45 275,105 275,225 170,285 65,225 65,105"/><polygon points="170,85 240,125 240,205 170,245 100,205 100,125"/><polygon points="170,125 205,145 205,185 170,205 135,185 135,145"/><line x1="170" y1="165" x2="170" y2="45"/><line x1="170" y1="165" x2="275" y2="105"/><line x1="170" y1="165" x2="275" y2="225"/><line x1="170" y1="165" x2="170" y2="285"/><line x1="170" y1="165" x2="65" y2="225"/><line x1="170" y1="165" x2="65" y2="105"/></g><polygon id="catRadarShape" class="quiz-radar-shape" points="170,165 170,165 170,165 170,165 170,165 170,165"/><g id="catRadarDots" class="quiz-radar-dots"></g><g class="quiz-radar-labels"><text x="170" y="24">亲人连接</text><text x="292" y="103">社交开放</text><text x="298" y="235">活跃玩心</text><text x="170" y="312">情绪自控</text><text x="42" y="235">自主领地</text><text x="43" y="103">环境敏感</text></g></svg></div><div id="catQuizScores" class="quiz-score-list"></div></div>
+          <div id="catQuizInsights" class="quiz-insight-grid"></div>
+          <section class="quiz-advice"><span>🐟</span><div><small>主子相处说明</small><p id="catQuizAdvice"></p></div></section>
+          <div class="quiz-meta"><span id="catQuizCompleteness">有效作答 30 / 30</span><span>观察期：最近3个月</span><span>依据：主人行为报告</span></div>
+          <p class="quiz-disclaimer">这是研究启发型趣味评估，不是医学或行为诊断。突然出现躲藏、攻击、过度舔毛或猫砂盆变化时，应优先排查健康与环境原因。</p>
+          <button id="catQuizRetake" class="quiz-secondary quiz-retake">重新测试</button>
+        </section>
+      </div>
+    </section>
+
     <section id="historyView" class="view history-view">
       <button class="page-back" data-view="home">← 返回工具合集</button><div class="history-head"><div><span class="eyebrow">PAW ARCHIVE</span><h1>毛孩子档案馆</h1><p>每一次测试，都是一张成长中的性格快照。</p></div><button class="secondary" data-view="test">＋ 新建测试</button></div>
       <div id="historyList" class="history-list"></div>
@@ -258,6 +290,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
-  <script src="app.js?v=20260910-4"></script>
+  <script src="app.js?v=20260910-5"></script>
 </body>
 </html>
