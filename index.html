@@ -215,6 +215,7 @@
           <div class="quiz-progress"><i id="quizProgressBar"></i></div>
           <div id="quizQuestionList" class="quiz-question-list"></div>
           <div class="quiz-actions"><button id="quizBackBtn" class="quiz-secondary">上一组</button><button id="quizNextBtn" class="quiz-primary" disabled>下一组 <span>→</span></button></div>
+          <p id="quizStatus" class="quiz-status" role="status" aria-live="polite"></p>
           <p class="quiz-save-note">答案只保存在当前页面，不会上传。</p>
         </section>
 
@@ -226,7 +227,7 @@
           </div>
           <div id="quizInsightGrid" class="quiz-insight-grid"></div>
           <section class="quiz-advice"><span>🦴</span><div><small>专属相处建议</small><p id="quizAdvice"></p></div></section>
-          <div class="quiz-meta"><span>答题完整度 100%</span><span>观察期：最近3个月</span><span>依据：主人行为报告</span></div>
+          <div class="quiz-meta"><span id="quizCompleteness">有效作答 24 / 24</span><span>观察期：最近3个月</span><span>依据：主人行为报告</span></div>
           <p class="quiz-disclaimer">这是研究启发型的趣味评估，不是犬类 MBTI、医学结论或行为诊断。同一只狗在年龄、环境与健康状态变化后，结果也可能改变。</p>
           <button id="quizRetakeBtn" class="quiz-secondary quiz-retake">重新测试</button>
         </section>

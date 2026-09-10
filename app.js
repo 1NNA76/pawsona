@@ -321,7 +321,7 @@ const dogQuizDims={
   trainability:{label:'学习力',icon:'🎓',high:'很会捕捉提示和反馈，是愿意和人合作的小学霸。',mid:'有兴趣时学得快，奖励方式选对会更投入。',low:'可能更看重环境和动机，需要短时、多奖励的练习。'},
   sensitivity:{label:'敏感度',icon:'📡',high:'对声音、气氛和情绪变化很敏锐，小心心雷达在线。',mid:'能觉察变化，也通常有自己的恢复节奏。',low:'神经比较大条，面对多数小变化都能淡定经过。'}
 };
-const dogQuizOptions=['从不','很少','有时','经常','几乎总是'];
+const dogQuizOptions=[{value:1,label:'从不'},{value:2,label:'很少'},{value:3,label:'有时'},{value:4,label:'经常'},{value:5,label:'几乎总是'},{value:0,label:'未观察到 / 不适用'}];
 let dogQuizStep=0;
 let dogQuizAnswers=Array(24).fill(null);
 
@@ -333,7 +333,7 @@ function renderDogQuizStep(){
   $('#quizProgressBar').style.width=`${(dogQuizAnswers.filter(v=>v!==null).length/24)*100}%`;
   $('#quizQuestionList').innerHTML=items.map((q,offset)=>{
     const index=start+offset;
-    return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${q.text}</h3><div class="quiz-options">${dogQuizOptions.map((label,i)=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${i+1}" ${dogQuizAnswers[index]===i+1?'checked':''}><span>${i+1} · ${label}</span></label>`).join('')}</div></article>`;
+    return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${q.text}</h3><div class="quiz-options">${dogQuizOptions.map(option=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${option.value}" ${dogQuizAnswers[index]===option.value?'checked':''}><span>${option.value?`${option.value} · `:''}${option.label}</span></label>`).join('')}</div></article>`;
   }).join('');
   $$('#quizQuestionList input').forEach(input=>input.addEventListener('change',event=>{
     const index=Number(event.target.name.replace('quiz-',''));
@@ -363,8 +363,9 @@ function dogQuizTitle(scores){
 }
 function showDogQuizResult(){
   const totals={social:0,attachment:0,activity:0,regulation:0,trainability:0,sensitivity:0};
-  dogQuizQuestions.forEach((q,i)=>{totals[q.dim]+=q.reverse?6-dogQuizAnswers[i]:dogQuizAnswers[i]});
-  const scores=Object.fromEntries(Object.entries(totals).map(([key,total])=>[key,Math.round((total-4)/16*100)]));
+  const counts={social:0,attachment:0,activity:0,regulation:0,trainability:0,sensitivity:0};
+  dogQuizQuestions.forEach((q,i)=>{const answer=dogQuizAnswers[i];if(answer>0){totals[q.dim]+=q.reverse?6-answer:answer;counts[q.dim]++}});
+  const scores=Object.fromEntries(Object.entries(totals).map(([key,total])=>[key,counts[key]?Math.round(((total/counts[key])-1)/4*100):50]));
   const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
   const top=ranked[0][0],second=ranked[1][0],low=ranked[ranked.length-1][0];
   const petName=$('#quizPetName').value.trim()||'你家毛孩子';
@@ -377,15 +378,21 @@ function showDogQuizResult(){
   $('#quizRadarShape').setAttribute('points',points.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '));
   $('#quizRadarDots').innerHTML=points.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5"/>`).join('');
   $('#quizScores').innerHTML=Object.entries(dogQuizDims).map(([key,dim])=>`<div class="quiz-score-row"><header><span>${dim.icon} ${dim.label}</span><b>${scores[key]}</b></header><div class="quiz-score-track"><i style="width:${scores[key]}%"></i></div><p>${scores[key]>=70?dim.high:scores[key]>=40?dim.mid:dim.low}</p></div>`).join('');
-  $('#quizInsightGrid').innerHTML=`<article class="quiz-insight"><small>🏆 天赋组合</small><strong>${dogQuizDims[top].label} × ${dogQuizDims[second].label}</strong><p>${dogQuizDims[top].high}</p></article><article class="quiz-insight"><small>💭 内心 OS</small><strong>“请按我的频道理解我”</strong><p>${scores[sensitivity]>=65?'我不是想太多，只是世界的声音在我这里比较响。':scores[activity]>=65?'我没有捣乱，我只是在给旺盛精力找一个出口。':'我有自己的节奏，熟悉以后会把真心慢慢交出来。'}</p></article>`;
+  $('#quizInsightGrid').innerHTML=`<article class="quiz-insight"><small>🏆 天赋组合</small><strong>${dogQuizDims[top].label} × ${dogQuizDims[second].label}</strong><p>${dogQuizDims[top].high}</p></article><article class="quiz-insight"><small>💭 内心 OS</small><strong>“请按我的频道理解我”</strong><p>${scores.sensitivity>=65?'我不是想太多，只是世界的声音在我这里比较响。':scores.activity>=65?'我没有捣乱，我只是在给旺盛精力找一个出口。':'我有自己的节奏，熟悉以后会把真心慢慢交出来。'}</p></article>`;
   const advice={social:'不必强迫它社交；给它可退开的距离，让每次新接触短而愉快。',attachment:'练习短时间、可预测的独处，用嗅闻垫或耐咬玩具建立安全感。',activity:'把训练拆成短小的游戏，并安排嗅闻、寻宝等低冲击消耗。',regulation:'从等待1秒、停止玩耍等微小成功开始，及时奖励冷静下来的瞬间。',trainability:'缩短单次练习，换成更喜欢的奖励，并尽量在低干扰环境起步。',sensitivity:'减少突然刺激，提供固定安全角；恢复慢时不催促，也不要用惩罚压住害怕。'};
   $('#quizAdvice').textContent=`目前相对需要支持的是「${dogQuizDims[low].label}」：${advice[low]}`;
+  const validCount=dogQuizAnswers.filter(answer=>answer>0).length;
+  $('#quizCompleteness').textContent=`有效作答 ${validCount} / 24`;
   $('#quizFormPanel').hidden=true;$('#quizResult').hidden=false;
   $('#quizResult').scrollIntoView({behavior:'smooth',block:'start'});
 }
 $('#quizStartBtn').addEventListener('click',startDogQuiz);
 $('#quizBackBtn').addEventListener('click',()=>{if(dogQuizStep>0){dogQuizStep--;renderDogQuizStep();window.scrollTo({top:$('#dogquizView').offsetTop,behavior:'smooth'})}});
-$('#quizNextBtn').addEventListener('click',()=>{if(dogQuizStep<5){dogQuizStep++;renderDogQuizStep();window.scrollTo({top:$('#dogquizView').offsetTop,behavior:'smooth'})}else{showDogQuizResult()}});
+$('#quizNextBtn').addEventListener('click',()=>{
+  if(dogQuizStep<5){dogQuizStep++;renderDogQuizStep();window.scrollTo({top:$('#dogquizView').offsetTop,behavior:'smooth'});return}
+  const button=$('#quizNextBtn');button.disabled=true;button.textContent='正在生成报告…';$('#quizStatus').textContent='正在整理六维得分，请稍候。';
+  try{showDogQuizResult();$('#quizStatus').textContent=''}catch(error){console.error('犬格报告生成失败',error);button.disabled=false;button.innerHTML='重新生成报告 <span>✦</span>';$('#quizStatus').textContent='报告生成遇到问题，请点击“重新生成报告”。'}
+});
 $('#quizRetakeBtn').addEventListener('click',()=>{$('#quizResult').hidden=true;$('#quizIntro').hidden=false;$('#quizIntro').scrollIntoView({behavior:'smooth',block:'start'})});
 function showToast(text){const t=$('#toast');t.textContent=text;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderHistory();
