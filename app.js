@@ -351,9 +351,9 @@ function renderDogQuizStep(){
     return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${q.text}</h3><div class="quiz-options">${dogQuizOptions.map(option=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${option.value}" ${dogQuizAnswers[index]===option.value?'checked':''}><span>${option.value?`${option.value} · `:''}${option.label}</span></label>`).join('')}</div></article>`;
   }).join('');
   const life=dogLifeQuestions[dogQuizStep];
-  const lifeMarkup=`<article class="quiz-question scenario"><span class="scenario-tag">生活画像 · ${life.label}</span><h3>${life.text}</h3><div class="quiz-options">${life.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="life-${dogQuizStep}" value="${i}" ${dogLifeAnswers[dogQuizStep]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`;
+  const lifeMarkup=`<article class="quiz-question"><h3>${life.text}</h3><div class="quiz-options">${life.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="life-${dogQuizStep}" value="${i}" ${dogLifeAnswers[dogQuizStep]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`;
   const bonus=dogBonusQuestions.find(question=>question.step===dogQuizStep);
-  const bonusMarkup=bonus?`<article class="quiz-question scenario street-question"><span class="scenario-tag">江湖档案 · ${bonus.label}</span><h3>${bonus.text}</h3><div class="quiz-options">${bonus.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="bonus-${bonus.key}" value="${i}" ${dogBonusAnswers[bonus.key]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`:'';
+  const bonusMarkup=bonus?`<article class="quiz-question"><h3>${bonus.text}</h3><div class="quiz-options">${bonus.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="bonus-${bonus.key}" value="${i}" ${dogBonusAnswers[bonus.key]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`:'';
   $('#quizQuestionList').innerHTML=coreMarkup+lifeMarkup+bonusMarkup;
   $$('#quizQuestionList input[name^="quiz-"]').forEach(input=>input.addEventListener('change',event=>{
     const index=Number(event.target.name.replace('quiz-',''));
@@ -389,6 +389,28 @@ function dogQuizTitle(scores){
   const titles={'activity+social':'社牛运动健将','attachment+sensitivity':'高敏黏人小卫星','regulation+trainability':'冷静纪律委员','activity+trainability':'行动派小学霸','attachment+social':'全家外交官','regulation+sensitivity':'谨慎观察家','activity+regulation':'精力管理大师','attachment+trainability':'默契跟班队长'};
   return titles[key]||`${dogQuizDims[top[0]].label}领航员`;
 }
+function escapeQuizText(value){return String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]))}
+function buildWrittenReport(petName,scores,top,second,low){
+  const name=escapeQuizText(petName);
+  const level=(score,high,mid,lowText)=>score>=70?high:score>=40?mid:lowText;
+  const fear=['受到压力时，身体可能先变得僵硬或发抖，需要安静环境慢慢恢复。','害怕时更倾向躲开刺激，安全角对它来说非常重要。','不安时会主动寻找家人，把亲近的人当作安全基地。','紧张时可能来回走动或发出声音，需要主人帮助它降低环境压力。','日常很少显露害怕，但仍要留意细微的回避和身体信号。','目前还没有足够线索判断它害怕时的表达方式。'][dogLifeAnswers[3]];
+  const greeting=['回家时会用热情靠近表达想念，重逢是它每天的重要仪式。','重逢的兴奋常直接写在动作里，蹦跳和转圈都是情绪满格的信号。','会平静地确认你回来了，感情稳定但表达并不夸张。','习惯先远远确认情况，等自己准备好后再来互动。','对回家动静反应较淡，不等于没有感情，可能只是表达方式更独立。','目前还不能确定它的迎接习惯。'][dogLifeAnswers[4]];
+  const home=['在家很会寻找舒服位置，随地瘫着通常意味着它对环境足够放心。','在家喜欢跟随家人移动，参与感和陪伴感对它很重要。','在家也保持巡视与探索，空间变化很容易吸引它的注意。','居家状态依然充满互动欲，玩具是它邀请家人加入的社交工具。','更偏爱安静角落，给它保留不被打扰的区域会更舒服。','居家表现比较多变，很难被单一模式概括。'][dogLifeAnswers[5]];
+  const food=['食物动机很强，零食会是有效奖励，但更要练习等待和控制摄入。','对包装声和食物线索十分敏锐，用小份奖励训练通常很有吸引力。','对吃饭有期待但还能保持节奏，食物奖励和其他奖励可以搭配使用。','吃饭比较从容，训练时可能需要更有吸引力的奖励。','对普通食物动力偏低，可以尝试玩具、称赞或环境探索作为奖励。','目前还没有足够信息判断它的食物动力。'][dogBonusAnswers.food];
+  const sections=[
+    ['🧭 核心性格',`${name}最鲜明的两个特征是${dogQuizDims[top].label}和${dogQuizDims[second].label}。${level(scores.regulation,'它通常有自己的判断，也能在规则中找到舒服的位置。','它有主意，也愿意在合适的时候听听人类的意见。','它的行动常常跑在思考前面，与其说“不听话”，不如说需要更清楚、更容易成功的规则。')}`],
+    ['🤝 社交模式',level(scores.social,`${name}对外界抱有较强兴趣，遇到新对象更愿意主动收集信息。`,` ${name}属于先看气氛再决定是否营业的类型，熟悉之后往往更放松。`,`${name}比较慢热，保持距离是它管理安全感的方式，不应该被强迫打招呼。`)],
+    ['🫶 和主人的关系',`${level(scores.attachment,`${name}很在意家人的位置，陪伴是它确认安全的重要方式。`,`${name}能在贴贴与独处之间切换，既需要连接也保留自己的空间。`,`${name}的感情表达相对独立，不总黏着并不代表不亲近。`)} ${greeting}`],
+    ['📡 情绪与安全感',`${level(scores.sensitivity,`${name}对声音、语气和环境变化很敏锐，情绪恢复需要被尊重。`,`${name}能察觉变化，通常也有自己的调节节奏。`,`${name}面对多数变化比较淡定，但仍会用细小动作表达边界。`)} ${fear}`],
+    ['🎓 学习与规则',level(scores.trainability,`${name}很会捕捉人的提示，短而清晰的练习能让它快速建立成就感。`,`${name}在有兴趣时学习效率不错，奖励选得合适比重复口令更重要。`,`${name}可能不是传统意义上的“服从型学生”，更适合短时练习、低干扰环境和即时奖励。`)],
+    ['🏠 日常生活',`${home} ${food}`],
+    ['⚠️ 容易踩到的雷',`${name}相对需要照顾的是${dogQuizDims[low].label}。不要用突然逼近、持续催促或反复惩罚来换取表面服从；先降低难度，让它知道下一步该做什么。`],
+    ['🌱 最适合的相处方式',`把${name}当成一个有偏好、有节奏的家庭成员。规律作息、可预测的边界、短而愉快的训练，以及允许它主动选择是否互动，会比一味要求“乖”更能建立长期默契。`]
+  ];
+  $('#quizWrittenHeadline').textContent=`${petName}的完整性格说明`;
+  $('#quizWrittenIntro').textContent=`${petName}是个很有自己想法的狗狗。它并不是一个固定标签，而是会随着环境、年龄和与家人的关系，展现出不同侧面。下面这份报告把本次回答拆成几个最值得留意的部分。`;
+  $('#quizWrittenSections').innerHTML=sections.map(([title,copy])=>`<article><h3>${title}</h3><p>${copy}</p></article>`).join('');
+}
 function showDogQuizResult(){
   const totals={social:0,attachment:0,activity:0,regulation:0,trainability:0,sensitivity:0};
   const counts={social:0,attachment:0,activity:0,regulation:0,trainability:0,sensitivity:0};
@@ -401,6 +423,7 @@ function showDogQuizResult(){
   $('#quizResultName').textContent=`${petName}的犬格报告`;
   $('#quizResultTitle').textContent=title;
   $('#quizResultSummary').textContent=`它最突出的频道是「${dogQuizDims[top].label}」，同时带着「${dogQuizDims[second].label}」的底色。不是固定标签，而是此刻生活状态的一张行为快照。`;
+  buildWrittenReport(petName,scores,top,second,low);
   const center={x:170,y:165},radius=120;
   const points=Object.keys(dogQuizDims).map((key,i)=>{const angle=(-90+i*60)*Math.PI/180;const r=radius*scores[key]/100;return {x:center.x+Math.cos(angle)*r,y:center.y+Math.sin(angle)*r};});
   $('#quizRadarShape').setAttribute('points',points.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '));

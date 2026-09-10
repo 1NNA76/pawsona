@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="report.css" />
   <link rel="stylesheet" href="hub.css" />
-  <link rel="stylesheet" href="quiz.css?v=20260910-3" />
+  <link rel="stylesheet" href="quiz.css?v=20260910-4" />
 </head>
 <body>
   <div class="noise"></div>
@@ -221,6 +221,7 @@
 
         <section id="quizResult" class="quiz-result" hidden>
           <div class="quiz-result-hero"><div><small id="quizResultName">毛孩子的犬格报告</small><h2 id="quizResultTitle">社牛运动健将</h2><p id="quizResultSummary"></p></div><span class="quiz-stamp">32题<br>完成</span></div>
+          <section class="quiz-written-report"><div class="written-report-head"><span>📝</span><div><small>文字版深度报告</small><strong id="quizWrittenHeadline">关于它的完整性格说明</strong></div></div><p id="quizWrittenIntro" class="written-intro"></p><div id="quizWrittenSections" class="written-sections"></div></section>
           <div class="quiz-result-main">
             <div class="quiz-radar-card"><svg id="quizRadar" viewBox="0 0 340 320" role="img" aria-label="犬格六维雷达图"><g class="quiz-radar-grid"><polygon points="170,45 275,105 275,225 170,285 65,225 65,105"/><polygon points="170,85 240,125 240,205 170,245 100,205 100,125"/><polygon points="170,125 205,145 205,185 170,205 135,185 135,145"/><line x1="170" y1="165" x2="170" y2="45"/><line x1="170" y1="165" x2="275" y2="105"/><line x1="170" y1="165" x2="275" y2="225"/><line x1="170" y1="165" x2="170" y2="285"/><line x1="170" y1="165" x2="65" y2="225"/><line x1="170" y1="165" x2="65" y2="105"/></g><polygon id="quizRadarShape" class="quiz-radar-shape" points="170,165 170,165 170,165 170,165 170,165 170,165"/><g id="quizRadarDots" class="quiz-radar-dots"></g><g class="quiz-radar-labels"><text x="170" y="24">社牛值</text><text x="292" y="103">黏人度</text><text x="298" y="235">活跃度</text><text x="170" y="312">自控力</text><text x="42" y="235">学习力</text><text x="43" y="103">敏感度</text></g></svg></div>
             <div id="quizScores" class="quiz-score-list"></div>
@@ -257,6 +258,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
-  <script src="app.js?v=20260910-3"></script>
+  <script src="app.js?v=20260910-4"></script>
 </body>
 </html>
