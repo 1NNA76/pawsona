@@ -286,6 +286,107 @@ $$('[data-report-tab]').forEach(button=>button.addEventListener('click',()=>{$$(
 $$('[data-question]').forEach(button=>button.addEventListener('click',()=>{selectedTarotQuestion=button.dataset.question;$$('[data-question]').forEach(b=>b.classList.remove('active'));button.classList.add('active');resetTarot();$('#tarotHint').textContent=`已选择「${tarotQuestionLabels[selectedTarotQuestion]}」· 凭第一感觉选一张`}));
 $$('.tarot-card').forEach(card=>card.addEventListener('click',()=>drawTarot(card)));
 $('#tarotAgain').addEventListener('click',resetTarot);
+
+const dogQuizQuestions=[
+  {text:'遇到不熟悉但友善的人时，它通常会主动靠近观察或打招呼。',dim:'social'},
+  {text:'在家里，它经常主动跟随主人从一个房间走到另一个房间。',dim:'attachment'},
+  {text:'看到牵引绳、玩具等活动信号时，它会迅速兴奋起来。',dim:'activity'},
+  {text:'面对食物或开门等期待事件时，它能在提示下短暂等待。',dim:'regulation'},
+  {text:'周围有轻度干扰时，它仍能把注意力转回主人。',dim:'trainability'},
+  {text:'突然的声音或动作容易让它受到惊吓。',dim:'sensitivity'},
+  {text:'在安全距离遇到陌生狗时，它愿意平静观察或尝试接触。',dim:'social'},
+  {text:'休息时，它倾向选择离熟悉的人较近的位置。',dim:'attachment'},
+  {text:'即使有玩耍机会，它多数时间仍更愿意安静休息。',dim:'activity',reverse:true},
+  {text:'主人发出停止信号时，它通常能中断正在做的事。',dim:'regulation'},
+  {text:'同一个简单规则练习几次后，它通常能逐渐理解。',dim:'trainability'},
+  {text:'害怕之后，它通常需要较长时间才能完全放松。',dim:'sensitivity'},
+  {text:'到一个陌生但安全的地方后，它会主动探索环境。',dim:'social'},
+  {text:'受到惊吓或不安时，它会主动寻找主人获得安全感。',dim:'attachment'},
+  {text:'清醒时，它会主动邀请人或其他动物玩耍。',dim:'activity'},
+  {text:'得不到想要的东西时，它会持续吠叫、扒拉或反复尝试。',dim:'regulation',reverse:true},
+  {text:'在安全环境被呼唤时，它大多数时候会回头或靠近。',dim:'trainability'},
+  {text:'主人的语气或情绪发生变化时，它会明显调整自己的行为。',dim:'sensitivity'},
+  {text:'面对新的对象或环境，它常长时间躲避、不愿接近。',dim:'social',reverse:true},
+  {text:'即使较长时间看不到主人，它通常也完全不在意对方的位置。',dim:'attachment',reverse:true},
+  {text:'户外活动结束后，它仍常表现出继续探索或运动的意愿。',dim:'activity'},
+  {text:'激动玩耍后，它能在合理时间内恢复平静。',dim:'regulation'},
+  {text:'短时间训练中，它很快失去兴趣且难以重新投入。',dim:'trainability',reverse:true},
+  {text:'面对多数陌生事件，它通常很放松，很少出现紧张反应。',dim:'sensitivity',reverse:true}
+];
+const dogQuizDims={
+  social:{label:'社牛值',icon:'🤝',high:'新朋友雷达常开，陌生场合也敢先闻为敬。',mid:'会先观察气氛，确认安全后再决定要不要营业。',low:'慢热不是高冷，它更需要距离与熟悉感。'},
+  attachment:{label:'黏人度',icon:'🧲',high:'很在意家人的位置，陪伴就是它的重要安全感。',mid:'贴贴和独处切换自如，是有边界感的家人。',low:'独立频道信号强，爱你但不必时时在线。'},
+  activity:{label:'活跃度',icon:'⚡',high:'身体里像装了小马达，行动永远比犹豫更快。',mid:'玩时尽兴、歇时安稳，能量档位比较均衡。',low:'舒服躺平是正经事，更偏爱低强度探索。'},
+  regulation:{label:'自控力',icon:'🧘',high:'兴奋之后收得回来，规则感与情绪刹车都不错。',mid:'平时能听劝，上头时还需要一点温柔提醒。',low:'冲动常跑在脑子前面，适合从简单等待练起。'},
+  trainability:{label:'学习力',icon:'🎓',high:'很会捕捉提示和反馈，是愿意和人合作的小学霸。',mid:'有兴趣时学得快，奖励方式选对会更投入。',low:'可能更看重环境和动机，需要短时、多奖励的练习。'},
+  sensitivity:{label:'敏感度',icon:'📡',high:'对声音、气氛和情绪变化很敏锐，小心心雷达在线。',mid:'能觉察变化，也通常有自己的恢复节奏。',low:'神经比较大条，面对多数小变化都能淡定经过。'}
+};
+const dogQuizOptions=['从不','很少','有时','经常','几乎总是'];
+let dogQuizStep=0;
+let dogQuizAnswers=Array(24).fill(null);
+
+function renderDogQuizStep(){
+  const start=dogQuizStep*4;
+  const items=dogQuizQuestions.slice(start,start+4);
+  $('#quizStepLabel').textContent=`第 ${dogQuizStep+1} 组 / 共 6 组`;
+  $('#quizProgressText').textContent=`${dogQuizAnswers.filter(v=>v!==null).length} / 24`;
+  $('#quizProgressBar').style.width=`${(dogQuizAnswers.filter(v=>v!==null).length/24)*100}%`;
+  $('#quizQuestionList').innerHTML=items.map((q,offset)=>{
+    const index=start+offset;
+    return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${q.text}</h3><div class="quiz-options">${dogQuizOptions.map((label,i)=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${i+1}" ${dogQuizAnswers[index]===i+1?'checked':''}><span>${i+1} · ${label}</span></label>`).join('')}</div></article>`;
+  }).join('');
+  $$('#quizQuestionList input').forEach(input=>input.addEventListener('change',event=>{
+    const index=Number(event.target.name.replace('quiz-',''));
+    dogQuizAnswers[index]=Number(event.target.value);
+    $('#quizProgressText').textContent=`${dogQuizAnswers.filter(v=>v!==null).length} / 24`;
+    $('#quizProgressBar').style.width=`${(dogQuizAnswers.filter(v=>v!==null).length/24)*100}%`;
+    updateDogQuizNext();
+  }));
+  $('#quizBackBtn').disabled=dogQuizStep===0;
+  $('#quizNextBtn').innerHTML=dogQuizStep===5?'查看犬格报告 <span>✦</span>':'下一组 <span>→</span>';
+  updateDogQuizNext();
+}
+function updateDogQuizNext(){
+  const start=dogQuizStep*4;
+  $('#quizNextBtn').disabled=!dogQuizAnswers.slice(start,start+4).every(v=>v!==null);
+}
+function startDogQuiz(){
+  dogQuizStep=0;dogQuizAnswers=Array(24).fill(null);
+  $('#quizIntro').hidden=true;$('#quizResult').hidden=true;$('#quizFormPanel').hidden=false;
+  renderDogQuizStep();
+}
+function dogQuizTitle(scores){
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([key])=>key);
+  const key=[...top].sort().join('+');
+  const titles={'activity+social':'社牛运动健将','attachment+sensitivity':'高敏黏人小卫星','regulation+trainability':'冷静纪律委员','activity+trainability':'行动派小学霸','attachment+social':'全家外交官','regulation+sensitivity':'谨慎观察家','activity+regulation':'精力管理大师','attachment+trainability':'默契跟班队长'};
+  return titles[key]||`${dogQuizDims[top[0]].label}领航员`;
+}
+function showDogQuizResult(){
+  const totals={social:0,attachment:0,activity:0,regulation:0,trainability:0,sensitivity:0};
+  dogQuizQuestions.forEach((q,i)=>{totals[q.dim]+=q.reverse?6-dogQuizAnswers[i]:dogQuizAnswers[i]});
+  const scores=Object.fromEntries(Object.entries(totals).map(([key,total])=>[key,Math.round((total-4)/16*100)]));
+  const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const top=ranked[0][0],second=ranked[1][0],low=ranked[ranked.length-1][0];
+  const petName=$('#quizPetName').value.trim()||'你家毛孩子';
+  const title=dogQuizTitle(scores);
+  $('#quizResultName').textContent=`${petName}的犬格报告`;
+  $('#quizResultTitle').textContent=title;
+  $('#quizResultSummary').textContent=`它最突出的频道是「${dogQuizDims[top].label}」，同时带着「${dogQuizDims[second].label}」的底色。不是固定标签，而是此刻生活状态的一张行为快照。`;
+  const center={x:170,y:165},radius=120;
+  const points=Object.keys(dogQuizDims).map((key,i)=>{const angle=(-90+i*60)*Math.PI/180;const r=radius*scores[key]/100;return {x:center.x+Math.cos(angle)*r,y:center.y+Math.sin(angle)*r};});
+  $('#quizRadarShape').setAttribute('points',points.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '));
+  $('#quizRadarDots').innerHTML=points.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5"/>`).join('');
+  $('#quizScores').innerHTML=Object.entries(dogQuizDims).map(([key,dim])=>`<div class="quiz-score-row"><header><span>${dim.icon} ${dim.label}</span><b>${scores[key]}</b></header><div class="quiz-score-track"><i style="width:${scores[key]}%"></i></div><p>${scores[key]>=70?dim.high:scores[key]>=40?dim.mid:dim.low}</p></div>`).join('');
+  $('#quizInsightGrid').innerHTML=`<article class="quiz-insight"><small>🏆 天赋组合</small><strong>${dogQuizDims[top].label} × ${dogQuizDims[second].label}</strong><p>${dogQuizDims[top].high}</p></article><article class="quiz-insight"><small>💭 内心 OS</small><strong>“请按我的频道理解我”</strong><p>${scores[sensitivity]>=65?'我不是想太多，只是世界的声音在我这里比较响。':scores[activity]>=65?'我没有捣乱，我只是在给旺盛精力找一个出口。':'我有自己的节奏，熟悉以后会把真心慢慢交出来。'}</p></article>`;
+  const advice={social:'不必强迫它社交；给它可退开的距离，让每次新接触短而愉快。',attachment:'练习短时间、可预测的独处，用嗅闻垫或耐咬玩具建立安全感。',activity:'把训练拆成短小的游戏，并安排嗅闻、寻宝等低冲击消耗。',regulation:'从等待1秒、停止玩耍等微小成功开始，及时奖励冷静下来的瞬间。',trainability:'缩短单次练习，换成更喜欢的奖励，并尽量在低干扰环境起步。',sensitivity:'减少突然刺激，提供固定安全角；恢复慢时不催促，也不要用惩罚压住害怕。'};
+  $('#quizAdvice').textContent=`目前相对需要支持的是「${dogQuizDims[low].label}」：${advice[low]}`;
+  $('#quizFormPanel').hidden=true;$('#quizResult').hidden=false;
+  $('#quizResult').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#quizStartBtn').addEventListener('click',startDogQuiz);
+$('#quizBackBtn').addEventListener('click',()=>{if(dogQuizStep>0){dogQuizStep--;renderDogQuizStep();window.scrollTo({top:$('#dogquizView').offsetTop,behavior:'smooth'})}});
+$('#quizNextBtn').addEventListener('click',()=>{if(dogQuizStep<5){dogQuizStep++;renderDogQuizStep();window.scrollTo({top:$('#dogquizView').offsetTop,behavior:'smooth'})}else{showDogQuizResult()}});
+$('#quizRetakeBtn').addEventListener('click',()=>{$('#quizResult').hidden=true;$('#quizIntro').hidden=false;$('#quizIntro').scrollIntoView({behavior:'smooth',block:'start'})});
 function showToast(text){const t=$('#toast');t.textContent=text;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderHistory();
 updateDeepReport(personas[0]);
