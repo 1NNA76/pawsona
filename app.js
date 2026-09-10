@@ -144,6 +144,23 @@ function birthCompatibility(owner,pet){
   const copy=score>=90?'性格节奏相近，陪伴方式也容易对上频道，属于很快就能建立默契的组合。':score>=82?'一个提供对方缺少的能量，差异反而让日常更有趣。':score>=74?'开始可能各有习惯，但稳定相处后会逐渐摸清彼此的表达方式。':'你们的节奏不完全一样，清晰边界和固定陪伴会让关系越来越稳。';
   return {score,title,copy,keys};
 }
+const bondFunProfiles=[
+  {tags:['同频搭子','情绪接收器','越养越像'],roles:['你负责把日子安排好 · 它负责把日子变好玩','你提供稳定的生活节奏，它承包家里那些毫无预告的可爱瞬间。'],os:['“放心吧，我每天都有偷偷更爱你一点。”','它不一定把热情挂在脸上，但早已把你写进自己的安全区。'],sweet:['自动靠近模式','你刚坐下，它就会若无其事地把附近最舒服的位置占好。'],friction:['关心方式打架','你越担心越想靠近，它偶尔越需要一点不被打扰的空间。'],mission:['让它当一次路线总监','留出 15 分钟，让它决定闻哪里、停多久；你只负责陪着。'],lucky:['鼠尾草绿','傍晚饭后','陪伴不用催']},
+  {tags:['反差萌组合','行动派联盟','快乐放大器'],roles:['你负责踩刹车 · 它负责一脚油门','一个考虑后果，一个先创造故事，组合起来刚好不无聊。'],os:['“我不是捣乱，我是在给我们的回忆加一点剧情。”','它最喜欢的并不是某个玩具，而是你愿意参与它的小世界。'],sweet:['突然对视就笑','它一个小表情，你已经知道下一秒是贴贴还是开饭。'],friction:['兴奋值超载','它上头时容易听不见，你疲惫时也容易把热情误读成调皮。'],mission:['完成一次三分钟寻宝','把三颗零食藏在安全位置，让它动鼻子，你负责真诚鼓掌。'],lucky:['日落橙','上午阳光时','先玩再讲理']},
+  {tags:['慢热知己','安静守护','细节满分'],roles:['你负责读懂沉默 · 它负责默默跟随','你们的感情不靠热闹证明，很多爱都藏在同一间房里。'],os:['“我没有一直看你，只是刚好每次你回头我都在。”','它把熟悉的气味、脚步和声音，都当作一天里最稳的背景。'],sweet:['同空间陪伴','不用一直互动，只要彼此看得见，安全感就已经充满。'],friction:['信号太含蓄','双方都等对方先靠近时，可能错过一次本来很甜的邀请。'],mission:['发起一场安静约会','关掉手机十分钟，坐在它附近，让它自由决定靠多近。'],lucky:['雾霾蓝','睡前半小时','我在这里呀']},
+  {tags:['饭搭子联盟','生活合伙人','稳定幸福'],roles:['你负责准点开饭 · 它负责准点提醒','你们用日常仪式积累感情，饭点、散步和晚安都有专属默契。'],os:['“世界那么大，但我最熟悉的是你开零食袋的声音。”','它记得的不只是吃过什么，也记得每一份好东西是谁递来的。'],sweet:['固定仪式感','同一句开饭口令、同一条回家路线，都能让它开心很久。'],friction:['规则被卖萌击穿','一个眼神就临时加餐，久了它会把撒娇当成正式谈判。'],mission:['创造一个专属暗号','选一句固定口令配合摸头或小游戏，坚持使用一周。'],lucky:['蜂蜜黄','早晨第一面','爱要有规律']}
+];
+function updateBondFun(owner,pet,result,seedText){
+  const seed=[...seedText].reduce((sum,char)=>sum+char.charCodeAt(0),0),profile=bondFunProfiles[seed%bondFunProfiles.length];
+  const dimensionNames=['陪伴同频','玩耍默契','情绪感应','生活节奏','互补能量'];
+  const dimensionIcons=['♡','✦','☁','◷','☯'];
+  const scores=dimensionNames.map((_,index)=>Math.max(58,Math.min(99,result.score+((seed>>(index*2))%17)-8)));
+  $('#bondTags').innerHTML=profile.tags.map(tag=>`<span>${tag}</span>`).join('');
+  $('#bondMeters').innerHTML=dimensionNames.map((name,index)=>`<div class="bond-meter"><span>${dimensionIcons[index]}</span><b>${name}</b><i><em style="width:${scores[index]}%"></em></i><strong>${scores[index]}</strong></div>`).join('');
+  const pairs=[['bondRoles','bondRoleCopy',profile.roles],['bondOs','bondOsCopy',profile.os],['bondSweet','bondSweetCopy',profile.sweet],['bondFriction','bondFrictionCopy',profile.friction],['bondMission','bondMissionCopy',profile.mission]];
+  pairs.forEach(([titleId,copyId,value])=>{$(`#${titleId}`).textContent=value[0];$(`#${copyId}`).textContent=value[1]});
+  $('#bondColor').textContent=profile.lucky[0];$('#bondTime').textContent=profile.lucky[1];$('#bondCode').textContent=profile.lucky[2];
+}
 function runBirthMatch(){
   const ownerDate=$('#ownerBirthDate').value,petDate=$('#petBirthDate').value;
   if(!ownerDate||!petDate){showToast('请先填写主人和宠物的出生日期');return}
@@ -152,6 +169,7 @@ function runBirthMatch(){
     $('#birthScore').textContent=result.score;$('#zodiacPair').textContent=`${owner.zodiac} × ${pet.zodiac}`;$('#matchTitle').textContent=result.title;$('#matchCopy').textContent=result.copy;
     $('#ownerBazi').textContent=owner.pillars;$('#petBazi').textContent=pet.pillars;
     $('#elementBars').innerHTML=result.keys.map(key=>`<div class="element-pill"><span>${key}</span><b>${owner.counts[key]} : ${pet.counts[key]}</b></div>`).join('');
+    updateBondFun(owner,pet,result,ownerDate+petDate);
     $('#birthdayNote').textContent=(!owner.hasTime||!pet.hasTime?'有一方未填写出生时间，本次仅使用三柱参考。':'双方均填写出生时间，本次使用完整四柱。')+' 算法为星座元素 40%＋五行互补 60%，仅供娱乐。';
     $('#birthResult').classList.add('show');
   }catch(error){showToast('历法算法还没准备好，请联网刷新后重试')}
