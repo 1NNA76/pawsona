@@ -330,47 +330,56 @@ const dogLifeQuestions=[
   {label:'回家仪式',text:'主人回家时，它通常怎么迎接？',options:['超级开心地靠近','激动到蹦跳或转圈','平静地过来看看','远处观察，稍后再来','基本没什么反应','不确定']},
   {label:'居家状态',text:'在家放松时，它最像下面哪一种？',options:['哪里舒服就随地瘫着','喜欢跟着家人移动','独自巡视和探索','经常叼玩具找人互动','偏爱躲在安静角落','没有固定模式']}
 ];
+const dogBonusQuestions=[
+  {step:1,key:'dogSocial',label:'狗狗社交',text:'遇到其他友善狗狗时，它通常愿意怎样相处？',options:['主动靠近，想一起玩','礼貌闻闻，能和平相处','看对象，合眼缘才营业','更愿意保持距离','容易叫喊、扑冲或发生冲突','没观察过']},
+  {step:4,key:'food',label:'干饭反应',text:'看到正餐或喜欢的零食时，它通常是什么反应？',options:['流口水、守着饭盆等不及','听见包装声就冲过来','开心但能等开饭','慢悠悠，不着急吃','对零食和食物比较冷漠','没观察过']}
+];
 let dogQuizStep=0;
 let dogQuizAnswers=Array(24).fill(null);
 let dogLifeAnswers=Array(6).fill(null);
+let dogBonusAnswers={dogSocial:null,food:null};
 
 function renderDogQuizStep(){
   const start=dogQuizStep*4;
   const items=dogQuizQuestions.slice(start,start+4);
   $('#quizStepLabel').textContent=`第 ${dogQuizStep+1} 组 / 共 6 组`;
-  const answeredCount=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length;
-  $('#quizProgressText').textContent=`${answeredCount} / 30`;
-  $('#quizProgressBar').style.width=`${(answeredCount/30)*100}%`;
+  const answeredCount=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length+Object.values(dogBonusAnswers).filter(v=>v!==null).length;
+  $('#quizProgressText').textContent=`${answeredCount} / 32`;
+  $('#quizProgressBar').style.width=`${(answeredCount/32)*100}%`;
   const coreMarkup=items.map((q,offset)=>{
     const index=start+offset;
     return `<article class="quiz-question"><h3><span>${String(index+1).padStart(2,'0')}</span>${q.text}</h3><div class="quiz-options">${dogQuizOptions.map(option=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${option.value}" ${dogQuizAnswers[index]===option.value?'checked':''}><span>${option.value?`${option.value} · `:''}${option.label}</span></label>`).join('')}</div></article>`;
   }).join('');
   const life=dogLifeQuestions[dogQuizStep];
   const lifeMarkup=`<article class="quiz-question scenario"><span class="scenario-tag">生活画像 · ${life.label}</span><h3>${life.text}</h3><div class="quiz-options">${life.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="life-${dogQuizStep}" value="${i}" ${dogLifeAnswers[dogQuizStep]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`;
-  $('#quizQuestionList').innerHTML=coreMarkup+lifeMarkup;
+  const bonus=dogBonusQuestions.find(question=>question.step===dogQuizStep);
+  const bonusMarkup=bonus?`<article class="quiz-question scenario street-question"><span class="scenario-tag">江湖档案 · ${bonus.label}</span><h3>${bonus.text}</h3><div class="quiz-options">${bonus.options.map((label,i)=>`<label class="quiz-option"><input type="radio" name="bonus-${bonus.key}" value="${i}" ${dogBonusAnswers[bonus.key]===i?'checked':''}><span>${label}</span></label>`).join('')}</div></article>`:'';
+  $('#quizQuestionList').innerHTML=coreMarkup+lifeMarkup+bonusMarkup;
   $$('#quizQuestionList input[name^="quiz-"]').forEach(input=>input.addEventListener('change',event=>{
     const index=Number(event.target.name.replace('quiz-',''));
     dogQuizAnswers[index]=Number(event.target.value);
-    const total=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length;
-    $('#quizProgressText').textContent=`${total} / 30`;
-    $('#quizProgressBar').style.width=`${(total/30)*100}%`;
+    const total=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length+Object.values(dogBonusAnswers).filter(v=>v!==null).length;
+    $('#quizProgressText').textContent=`${total} / 32`;
+    $('#quizProgressBar').style.width=`${(total/32)*100}%`;
     updateDogQuizNext();
   }));
   $$(`#quizQuestionList input[name="life-${dogQuizStep}"]`).forEach(input=>input.addEventListener('change',event=>{
     dogLifeAnswers[dogQuizStep]=Number(event.target.value);
-    const total=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length;
-    $('#quizProgressText').textContent=`${total} / 30`;$('#quizProgressBar').style.width=`${(total/30)*100}%`;updateDogQuizNext();
+    const total=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length+Object.values(dogBonusAnswers).filter(v=>v!==null).length;
+    $('#quizProgressText').textContent=`${total} / 32`;$('#quizProgressBar').style.width=`${(total/32)*100}%`;updateDogQuizNext();
   }));
+  if(bonus){$$(`#quizQuestionList input[name="bonus-${bonus.key}"]`).forEach(input=>input.addEventListener('change',event=>{dogBonusAnswers[bonus.key]=Number(event.target.value);const total=dogQuizAnswers.filter(v=>v!==null).length+dogLifeAnswers.filter(v=>v!==null).length+Object.values(dogBonusAnswers).filter(v=>v!==null).length;$('#quizProgressText').textContent=`${total} / 32`;$('#quizProgressBar').style.width=`${(total/32)*100}%`;updateDogQuizNext()}))}
   $('#quizBackBtn').disabled=dogQuizStep===0;
   $('#quizNextBtn').innerHTML=dogQuizStep===5?'查看犬格报告 <span>✦</span>':'下一组 <span>→</span>';
   updateDogQuizNext();
 }
 function updateDogQuizNext(){
   const start=dogQuizStep*4;
-  $('#quizNextBtn').disabled=!dogQuizAnswers.slice(start,start+4).every(v=>v!==null)||dogLifeAnswers[dogQuizStep]===null;
+  const bonus=dogBonusQuestions.find(question=>question.step===dogQuizStep);
+  $('#quizNextBtn').disabled=!dogQuizAnswers.slice(start,start+4).every(v=>v!==null)||dogLifeAnswers[dogQuizStep]===null||(bonus&&dogBonusAnswers[bonus.key]===null);
 }
 function startDogQuiz(){
-  dogQuizStep=0;dogQuizAnswers=Array(24).fill(null);dogLifeAnswers=Array(6).fill(null);
+  dogQuizStep=0;dogQuizAnswers=Array(24).fill(null);dogLifeAnswers=Array(6).fill(null);dogBonusAnswers={dogSocial:null,food:null};
   $('#quizIntro').hidden=true;$('#quizResult').hidden=true;$('#quizFormPanel').hidden=false;
   renderDogQuizStep();
 }
@@ -399,10 +408,17 @@ function showDogQuizResult(){
   $('#quizScores').innerHTML=Object.entries(dogQuizDims).map(([key,dim])=>`<div class="quiz-score-row"><header><span>${dim.icon} ${dim.label}</span><b>${scores[key]}</b></header><div class="quiz-score-track"><i style="width:${scores[key]}%"></i></div><p>${scores[key]>=70?dim.high:scores[key]>=40?dim.mid:dim.low}</p></div>`).join('');
   $('#quizInsightGrid').innerHTML=`<article class="quiz-insight"><small>🏆 天赋组合</small><strong>${dogQuizDims[top].label} × ${dogQuizDims[second].label}</strong><p>${dogQuizDims[top].high}</p></article><article class="quiz-insight"><small>💭 内心 OS</small><strong>“请按我的频道理解我”</strong><p>${scores.sensitivity>=65?'我不是想太多，只是世界的声音在我这里比较响。':scores.activity>=65?'我没有捣乱，我只是在给旺盛精力找一个出口。':'我有自己的节奏，熟悉以后会把真心慢慢交出来。'}</p></article>`;
   $('#quizBehaviorProfile').innerHTML=dogLifeQuestions.map((question,index)=>`<div class="quiz-behavior-item"><small>${question.label}</small><b>${question.options[dogLifeAnswers[index]]}</b></div>`).join('');
+  const socialIndex=[96,82,62,38,14,50][dogBonusAnswers.dogSocial];
+  const battleIndex=[18,26,48,32,92,50][dogBonusAnswers.dogSocial];
+  const foodIndex=[100,92,72,48,16,50][dogBonusAnswers.food];
+  const streetTitles=['小区和平大使','礼貌社交委员','选择性营业选手','高冷独行侠','打遍小区无敌手 · 自封狗王','江湖身份待解锁'];
+  const foodTitles=['干饭永动机','零食雷达满格','准点食堂客','佛系吃播','食物冷淡家','干饭属性待观察'];
+  $('#quizStreetTitle').textContent=`${streetTitles[dogBonusAnswers.dogSocial]}｜${foodTitles[dogBonusAnswers.food]}`;
+  $('#quizStreetMeters').innerHTML=[['🤝 友好程度',socialIndex],['⚔️ 战斗气场',battleIndex],['🍗 干饭热情',foodIndex]].map(([label,value])=>`<div class="quiz-street-meter"><header><span>${label}</span><b>${value}</b></header><div><i style="width:${value}%"></i></div></div>`).join('');
   const advice={social:'不必强迫它社交；给它可退开的距离，让每次新接触短而愉快。',attachment:'练习短时间、可预测的独处，用嗅闻垫或耐咬玩具建立安全感。',activity:'把训练拆成短小的游戏，并安排嗅闻、寻宝等低冲击消耗。',regulation:'从等待1秒、停止玩耍等微小成功开始，及时奖励冷静下来的瞬间。',trainability:'缩短单次练习，换成更喜欢的奖励，并尽量在低干扰环境起步。',sensitivity:'减少突然刺激，提供固定安全角；恢复慢时不催促，也不要用惩罚压住害怕。'};
   $('#quizAdvice').textContent=`目前相对需要支持的是「${dogQuizDims[low].label}」：${advice[low]}`;
   const validCount=dogQuizAnswers.filter(answer=>answer>0).length;
-  $('#quizCompleteness').textContent=`六维有效作答 ${validCount} / 24 · 生活画像 6 / 6`;
+  $('#quizCompleteness').textContent=`六维有效作答 ${validCount} / 24 · 生活画像 8 / 8`;
   $('#quizFormPanel').hidden=true;$('#quizResult').hidden=false;
   $('#quizResult').scrollIntoView({behavior:'smooth',block:'start'});
 }
